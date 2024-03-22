@@ -1,0 +1,73 @@
+<main class="px-4">
+  <h2 class="display-4 mb-4 mt-4">Place your order</h2>
+  <form [formGroup]="ordersForm">
+    @for (rowControl of rowsControls; let rowIndex = $index; track rowIndex) {
+      <div class="row mt-2 align-items-end" [formGroup]="getFormGroupAtIndex(rowIndex)">
+        @for (control of controlsArray; let ctrlIndex = $index; track ctrlIndex) {
+          @if (control.type === 'select') {
+            <div class="col-3">
+              <label for="{{ control.name + rowIndex }}" class="form-label">{{ control.label }}<span [style.color]="'var(--bs-red)'">*</span></label>
+              <select (change)="calculateTotalPrice(rowIndex)" id="{{ control.name + rowIndex }}" class="form-select" aria-label="Select an item" [formControlName]="control.name">
+                @for (item of items; track item.id) {
+                  <option [ngValue]="item">{{ item.name }}</option>
+                }
+              </select>
+            </div>
+          } @else if (control.type === 'number') {
+            <div class="col-3">
+              <label for="{{ control.name + rowIndex }}" class="form-label">{{ control.label }}<span [style.color]="'var(--bs-red)'">*</span></label>
+              <input (input)="calculateTotalPrice(rowIndex)" type="{{ control.type }}" class="form-control" id="{{ control.name + rowIndex }}" placeholder="{{ control.placeholder }}" [formControlName]="control.name">
+            </div>
+          } @else {
+            <div class="col-3">
+              <label for="{{ control.name + rowIndex }}" class="form-label">{{ control.label }}</label>
+              <div class="input-group">
+                <span class="input-group-text">$</span>
+                <input type="{{ control.type }}" class="form-control" id="{{ control.name + rowIndex }}" placeholder="{{ control.placeholder }}" [formControlName]="control.name">
+                <span class="input-group-text">.00</span>
+              </div>
+            </div>
+          }
+        }
+
+        <div class="col-3">
+          <button class="btn btn-danger" (click)="deleteRow(rowIndex)">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash-fill" viewBox="0 0 16 16">
+              <path d="M2.5 1a1 1 0 0 0-1 1v1a1 1 0 0 0 1 1H3v9a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V4h.5a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H10a1 1 0 0 0-1-1H7a1 1 0 0 0-1 1zm3 4a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 .5-.5M8 5a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7A.5.5 0 0 1 8 5m3 .5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 1 0"/>
+            </svg>
+          </button>
+        </div>
+      </div>
+    }
+  
+    <div class="d-flex align-items-end gap-4">
+      <button class="btn btn-secondary d-flex align-items-center" (click)="addRow()">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-plus-circle-fill" viewBox="0 0 16 16">
+          <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0M8.5 4.5a.5.5 0 0 0-1 0v3h-3a.5.5 0 0 0 0 1h3v3a.5.5 0 0 0 1 0v-3h3a.5.5 0 0 0 0-1h-3z"/>
+        </svg>
+        &nbsp;
+        Add an order
+      </button>
+
+      @if (rowsControls.length) {
+        <button class="btn btn-outline-primary mt-4" [disabled]="ordersForm.invalid" (click)="onSubmit()">Submit Request</button>
+      }
+    </div>
+  </form>
+</main>
+
+<hr />
+
+@if (billGenerated) {
+  <section class="px-4">
+    <h2 class="display-4">Bill:</h2>
+    <ul class="list-group">
+      @for (item of generatedBillArray; track $index) {
+        <li class="list-group-item d-flex justify-content-between align-items-center">
+          {{ item['name'] }}
+          <span class="badge text-bg-primary rounded-pill">$ {{ item['totalPrice'] }}</span>
+        </li>
+      }
+    </ul>
+  </section>
+}

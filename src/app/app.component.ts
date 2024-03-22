@@ -1,10 +1,10 @@
 import { Component } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
+import { DynamicFormGeneratorComponent } from './components/dynamic-form-generator/dynamic-form-generator.component';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterOutlet],
+  imports: [DynamicFormGeneratorComponent],
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss'
 })
